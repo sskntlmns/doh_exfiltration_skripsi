@@ -1,0 +1,81 @@
+DoH Exfiltration Detection - Enriched Experiment Report
+====================================================================
+Dataset                    : ..\data\BCCC-CIRA-CIC-DoHBrw-2020.csv
+Rows after cleaning        : 491,991
+Numeric features           : 28
+Best model                 : Random Forest
+Default selected threshold : 0.45
+Enhanced selected threshold: 0.45
+
+Advanced Evaluation Metrics
+              model  balanced_accuracy  average_precision      mcc  specificity_tnr  negative_predictive_value  false_discovery_rate  false_positive_rate  false_negative_count  false_positive_count
+      Random Forest           0.999869           0.999999 0.999736         0.999959                   0.999773              0.000040             0.000041                    11                     2
+           AdaBoost           0.998266           0.999961 0.996524         0.998556                   0.997918              0.001403             0.001444                   101                    70
+Logistic Regression           0.900762           0.953172 0.805058         0.859190                   0.935385              0.126778             0.140810                  2878                  6828
+
+Resource Profiling
+        model  rows_profiled  threshold  inference_time_sec  throughput_rows_per_sec  peak_memory_mb  predicted_alerts
+Random Forest          98399       0.45            0.344658            285497.507685       50.523001             49901
+
+Cross-Validation Stability
+           metric     mean          std      min     max
+          roc_auc 1.000000 1.052734e-07 1.000000 1.00000
+               f1 0.999876 2.876006e-05 0.999840 0.99992
+           recall 0.999824 5.435834e-05 0.999740 0.99990
+        precision 0.999928 5.610171e-05 0.999860 0.99998
+balanced_accuracy 0.999875 2.921107e-05 0.999838 0.99992
+
+Lightweight GridSearchCV Trial
+                                                                                        best_params  cv_best_roc_auc  test_roc_auc  test_f1_default_threshold  test_recall_default_threshold  test_precision_default_threshold
+{'classifier__max_depth': None, 'classifier__min_samples_leaf': 1, 'classifier__n_estimators': 200}              1.0      0.999999                    0.99987                        0.99978                           0.99996
+
+Top 15 Explainability Features
+                           feature  mean_abs_importance              method
+                  PacketLengthMode             0.162691 shap_tree_explainer
+                  PacketLengthMean             0.057679 shap_tree_explainer
+     PacketLengthStandardDeviation             0.046468 shap_tree_explainer
+                PacketLengthMedian             0.033936 shap_tree_explainer
+PacketLengthCoefficientofVariation             0.031834 shap_tree_explainer
+       PacketTimeStandardDeviation             0.031687 shap_tree_explainer
+              PacketLengthVariance             0.026353 shap_tree_explainer
+                PacketTimeVariance             0.024785 shap_tree_explainer
+                 FlowBytesReceived             0.024045 shap_tree_explainer
+                     FlowBytesSent             0.023439 shap_tree_explainer
+                    PacketTimeMean             0.019336 shap_tree_explainer
+                  PacketTimeMedian             0.017054 shap_tree_explainer
+          PacketLengthSkewFromMode             0.012011 shap_tree_explainer
+            ResponseTimeTimeMedian             0.011527 shap_tree_explainer
+  PacketTimeCoefficientofVariation             0.010382 shap_tree_explainer
+
+Enhanced Threshold Selected Metrics
+ threshold  precision  recall_tpr  f1_score  specificity_tnr      fpr  alert_volume  alert_rate  utility_score      tn  fp  fn      tp
+      0.45    0.99996     0.99982   0.99989         0.999959 0.000041       49901.0    0.507129       2.999476 48489.0 2.0 9.0 49899.0
+
+Environment Comparison Summary
+        aspect                           current_experiment                                                target_soc_environment                                                      risk_or_gap                                                    mitigation
+   Data source                       Public/offline dataset                 Live resolver, proxy, EDR, DNS, and network telemetry Distribusi trafik produksi dapat berbeda dari dataset penelitian    Validasi ulang dengan telemetry lokal dan holdout temporal
+ Label quality Dataset label digunakan sebagai ground truth Label berasal dari triage analyst, threat intel, dan incident closure                      Label operasional bisa noisy atau terlambat                 Gunakan feedback loop dan periodic relabeling
+ Feature scope                        Metadata flow numerik   Metadata flow ditambah host, user, ASN, JA3/JA4, dan policy context                           Konteks SOC belum lengkap di model ini              Tambahkan enrichment non-payload secara bertahap
+       Latency                               Batch notebook                                                Near-real-time scoring                      Kebutuhan throughput belum diuji end-to-end                 Load test pipeline scoring dan alert delivery
+Alert handling                     Simulasi alert sederhana                  Case management dengan deduplication dan suppression                     Alert fatigue jika threshold terlalu agresif Gunakan threshold berbasis kapasitas SOC dan severity routing
+
+Enhanced SOC Alert Summary
+ enhanced_alert priority                      triage_reason                                  recommended_action  count
+          False       P4 below enhanced operating threshold       suppress unless correlated with other signals  48498
+           True       P4 above enhanced operating threshold                            queue for analyst review      2
+           True       P3 above enhanced operating threshold                            queue for analyst review     29
+           True       P3              high model confidence                            queue for analyst review      6
+           True       P2              high model confidence       create case and correlate with DNS/proxy logs     79
+           True       P2         very high model confidence       create case and correlate with DNS/proxy logs     10
+           True       P1         very high model confidence open incident and validate endpoint/network context  49775
+
+Methodological Notes
+- Dataset publik digunakan karena tidak tersedia akses trafik SOC operasional nyata.
+- Kelas Malicious digunakan sebagai proksi trafik DoH berbahaya yang relevan dengan skenario eksfiltrasi/tunneling.
+- Model hanya menggunakan metadata flow numerik dan tidak melakukan dekripsi payload.
+- Simulasi alert SOC merupakan proof of concept offline, bukan sistem real-time.
+- Hasil pada dataset publik belum tentu langsung merepresentasikan performa pada jaringan operasional nyata.
+- Enrichment ini tidak menggantikan validasi produksi atau uji real-time.
+- Threshold perlu disesuaikan dengan kapasitas triage SOC dan toleransi false positive.
+- Explainability digunakan sebagai insight awal, bukan bukti kausal tunggal.
+- Section berat seperti Cross-Validation, GridSearchCV, dan Explainability dapat dijalankan terpisah serta dicatat statusnya.

@@ -1,0 +1,4 @@
+Model,Model Size (MB),Peak Memory Inference (MB),Inference Time (s),Latency (ms/sample),Throughput (rows/s),CPU Usage (%)
+Logistic Regression,0.004,42.048,0.060967,0.00062,1613971.49,8.54
+Random Forest,17.681,50.482,0.362106,0.00368,271741.02,56.46
+AdaBoost,0.125,42.048,1.97594,0.020081,49798.56,8.17

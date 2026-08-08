@@ -1,0 +1,2 @@
+model_name,threshold,status,total_samples,false_positive_count,false_negative_count,false_positive_rate,false_negative_rate,generated_at
+Random Forest,0.45,ok,98399,2,9,2.0325409811075316e-05,9.146434414983892e-05,2026-08-06 15:28:34

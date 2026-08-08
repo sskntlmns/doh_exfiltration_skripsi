@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Poster — DNS-over-HTTPS Exfiltration Detection</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════════
+           PRINT RULE: Lock to exact A4 Portrait (210mm x 297mm)
+        ═══════════════════════════════════════════════════════ */
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #94A3B8;
+            color: #1E293B;
+            display: flex;
+            justify-content: center;
+            padding: 12px 0;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           POSTER CANVAS: Full Height, Uniform Spacing
+        ═══════════════════════════════════════════════════════ */
+        .poster {
+            width: 210mm;
+            height: 295mm;
+            max-height: 297mm;
+            overflow: hidden;
+            background: #F8FAFC;
+            display: flex;
+            flex-direction: column;
+            padding: 5.5mm 7mm 5mm 7mm;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            gap: 5px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           HEADER
+        ═══════════════════════════════════════════════════════ */
+        .header {
+            background: #1E293B;
+            border-radius: 6px;
+            padding: 9.5px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: #FEF3C7;
+            color: #B45309;
+            font-size: 6.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+            padding: 2px 7.5px;
+            border-radius: 3px;
+            margin-bottom: 3px;
+        }
+
+        .header-left h1 {
+            font-size: 15px;
+            font-weight: 800;
+            line-height: 1.18;
+            color: #FFFFFF;
+            margin-bottom: 2px;
+            letter-spacing: -0.2px;
+        }
+
+        .header-left h2 {
+            font-size: 8.2px;
+            font-weight: 400;
+            color: #94A3B8;
+        }
+
+        .header-right {
+            text-align: right;
+            padding-left: 14px;
+            border-left: 1px solid rgba(255, 255, 255, 0.12);
+            min-width: 125px;
+        }
+
+        .author-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .author-affiliation {
+            font-size: 7.2px;
+            color: #94A3B8;
+            line-height: 1.4;
+            margin-top: 1px;
+        }
+
+        .author-affiliation strong {
+            color: #E2E8F0;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           STATS HIGHLIGHT ROW
+        ═══════════════════════════════════════════════════════ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            flex-shrink: 0;
+        }
+
+        .stat-box {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 5px;
+            padding: 4.5px 6px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        .stat-box.green { border-top: 3px solid #059669; }
+        .stat-box.blue { border-top: 3px solid #1E3A8A; }
+        .stat-box.teal { border-top: 3px solid #0D9488; }
+        .stat-box.terracotta { border-top: 3px solid #C2410C; }
+
+        .stat-box .number {
+            font-size: 14.5px;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .stat-box.green .number { color: #059669; }
+        .stat-box.blue .number { color: #1E3A8A; }
+        .stat-box.teal .number { color: #0D9488; }
+        .stat-box.terracotta .number { color: #C2410C; }
+
+        .stat-box .label {
+            font-size: 6.2px;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-top: 1px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           2-COLUMN GRID (UNIFORM 5.5px GAP EVERYWHERE - NO HOLES)
+        ═══════════════════════════════════════════════════════ */
+        .poster-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5.5px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 5.5px;
+            height: 100%;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           CARD: PURE WHITE, UNIFORM FLEX-1 FILL
+        ═══════════════════════════════════════════════════════ */
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 5px;
+            padding: 6.5px 9px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 1;
+        }
+
+        .card.acc-navy { border-top: 3px solid #1E3A8A; }
+        .card.acc-green { border-top: 3px solid #059669; }
+        .card.acc-teal { border-top: 3px solid #0D9488; }
+        .card.acc-terracotta { border-top: 3px solid #C2410C; }
+
+        /* Card Title */
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-bottom: 2px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .card-title h3 {
+            font-size: 9.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #1E293B;
+            flex: 1;
+        }
+
+        .section-num {
+            font-size: 6.8px;
+            font-weight: 800;
+            padding: 1.5px 4.5px;
+            border-radius: 3px;
+            letter-spacing: 0.4px;
+        }
+
+        .acc-navy .section-num { color: #1E3A8A; background: #EFF6FF; }
+        .acc-green .section-num { color: #059669; background: #ECFDF5; }
+        .acc-teal .section-num { color: #0D9488; background: #F0FDFA; }
+        .acc-terracotta .section-num { color: #C2410C; background: #FFF7ED; }
+
+        .icon-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .acc-navy .icon-dot { background: #1E3A8A; }
+        .acc-green .icon-dot { background: #059669; }
+        .acc-teal .icon-dot { background: #0D9488; }
+        .acc-terracotta .icon-dot { background: #C2410C; }
+
+        /* ═══════════════════════════════════════════════════════
+           TYPOGRAPHY & LISTS
+        ═══════════════════════════════════════════════════════ */
+        p {
+            font-size: 8.8px;
+            line-height: 1.34;
+            color: #475569;
+        }
+
+        p b, p strong {
+            color: #1E293B;
+            font-weight: 600;
+        }
+
+        .text-green { color: #059669; font-weight: 700; }
+        .text-navy { color: #1E3A8A; font-weight: 700; }
+        .text-teal { color: #0D9488; font-weight: 700; }
+        .text-terracotta { color: #C2410C; font-weight: 700; }
+
+        ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8px;
+        }
+
+        ul li {
+            font-size: 8.6px;
+            line-height: 1.3;
+            color: #475569;
+            padding-left: 9px;
+            position: relative;
+        }
+
+        ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 4.5px;
+            width: 4px;
+            height: 4px;
+            border-radius: 1px;
+        }
+
+        .acc-navy ul li::before { background: #1E3A8A; }
+        .acc-green ul li::before { background: #059669; }
+        .acc-teal ul li::before { background: #0D9488; }
+        .acc-terracotta ul li::before { background: #C2410C; }
+
+        ul li b, ul li strong {
+            color: #1E293B;
+            font-weight: 600;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           THREAT TOOLS ROW (CARD 01)
+        ═══════════════════════════════════════════════════════ */
+        .threat-row {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            margin-top: 1.5px;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 3.5px;
+            padding: 2px 5px;
+        }
+
+        .threat-label {
+            font-size: 6.5px;
+            font-weight: 800;
+            color: #64748B;
+            text-transform: uppercase;
+        }
+
+        .threat-tag {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #DC2626;
+            font-size: 6.8px;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 2.5px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           PIPELINE (CARD 02)
+        ═══════════════════════════════════════════════════════ */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2px;
+            margin: 1.5px 0;
+        }
+
+        .pipeline-step {
+            background: #EFF6FF;
+            border: 1px solid #BFDBFE;
+            border-radius: 3.5px;
+            padding: 1.5px 4.5px;
+            font-size: 6.8px;
+            font-weight: 700;
+            color: #1E3A8A;
+            text-align: center;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .pipeline-arrow {
+            color: #1E3A8A;
+            font-size: 7.5px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .feature-tag-row {
+            display: flex;
+            gap: 3px;
+            margin-top: 1.5px;
+        }
+
+        .ftag {
+            background: #F1F5F9;
+            border: 1px solid #CBD5E1;
+            border-radius: 3px;
+            padding: 1.5px 4px;
+            font-size: 6.8px;
+            font-weight: 600;
+            color: #475569;
+            flex: 1;
+            text-align: center;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           BENCHMARK TABLE & METRICS (CARD 03)
+        ═══════════════════════════════════════════════════════ */
+        .table-wrapper {
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #E2E8F0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7.8px;
+        }
+
+        th {
+            background: #F8FAFC;
+            color: #1E293B;
+            font-weight: 700;
+            font-size: 6.8px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding: 2.2px 4px;
+            text-align: left;
+            border-bottom: 1.5px solid #E2E8F0;
+        }
+
+        td {
+            padding: 2.2px 4px;
+            color: #475569;
+            border-bottom: 1px solid #F1F5F9;
+            font-size: 7.8px;
+        }
+
+        td:first-child { font-weight: 600; color: #1E293B; }
+        tr:last-child td { border-bottom: none; }
+        tr.highlight-row td { background: #ECFDF5; color: #059669; font-weight: 700; }
+
+        .badge-best {
+            display: inline-block;
+            background: #059669;
+            color: #FFFFFF;
+            font-size: 5.6px;
+            font-weight: 800;
+            padding: 1px 3.5px;
+            border-radius: 2px;
+            text-transform: uppercase;
+            margin-left: 2px;
+            vertical-align: middle;
+        }
+
+        .adv-metrics-row {
+            display: flex;
+            justify-content: space-between;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 3px;
+            padding: 1.5px 4px;
+            font-size: 6.4px;
+            color: #475569;
+            margin-top: 1.5px;
+        }
+
+        .latency-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #F0FDFA;
+            border: 1px solid #CCFBF1;
+            border-radius: 3px;
+            padding: 1.5px 4px;
+            font-size: 6.4px;
+            color: #0F766E;
+            margin-top: 1.5px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           CONFUSION MATRIX (CARD 04)
+        ═══════════════════════════════════════════════════════ */
+        .cm-block {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 4px;
+            padding: 2.5px 4px;
+        }
+
+        .cm-block-title {
+            font-size: 6.6px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #64748B;
+            margin-bottom: 1.5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cm-2x2-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+        }
+
+        .cm-card {
+            border-radius: 2.5px;
+            padding: 2px 3px;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+
+        .cm-card.green { background: #ECFDF5; border-color: #A7F3D0; }
+        .cm-card.red { background: #FEF2F2; border-color: #FECACA; }
+        .cm-card.yellow { background: #FEFCE8; border-color: #FEF08A; }
+
+        .cm-card .cm-val {
+            font-size: 8.8px;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .cm-card.green .cm-val { color: #059669; }
+        .cm-card.red .cm-val { color: #DC2626; }
+        .cm-card.yellow .cm-val { color: #B45309; }
+
+        .cm-card .cm-lbl {
+            font-size: 5.4px;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+        }
+
+        .cm-caption {
+            font-size: 6.5px;
+            color: #64748B;
+            margin-top: 1.5px;
+            line-height: 1.2;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           SOC TOPOLOGY & COST (CARD 05)
+        ═══════════════════════════════════════════════════════ */
+        .topology {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2px;
+            margin: 1.5px 0;
+        }
+
+        .topo-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            padding: 2.5px 3.5px;
+            border-radius: 3.5px;
+            background: #F0FDFA;
+            border: 1px solid #CCFBF1;
+            flex: 1;
+        }
+
+        .topo-node svg {
+            width: 11px;
+            height: 11px;
+            color: #0D9488;
+        }
+
+        .topo-node span {
+            font-size: 5.5px;
+            font-weight: 700;
+            color: #0F766E;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .topo-arrow {
+            color: #0D9488;
+            font-size: 7.5px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .cost-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5px;
+            margin-top: 1.5px;
+        }
+
+        .cost-card {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 3px;
+            padding: 2px 4px;
+        }
+
+        .cost-card .cost-head {
+            font-size: 5.5px;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+        }
+
+        .cost-card .cost-num {
+            font-size: 7.8px;
+            font-weight: 800;
+            color: #0D9488;
+            line-height: 1.1;
+            margin: 0.5px 0;
+        }
+
+        .cost-card .cost-detail {
+            font-size: 5.6px;
+            color: #94A3B8;
+            line-height: 1.1;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           EXPLAINABILITY BAR CHART (CARD 06)
+        ═══════════════════════════════════════════════════════ */
+        .feature-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-top: 1.5px;
+        }
+
+        .feature-bar {
+            display: flex;
+            align-items: center;
+            gap: 3.5px;
+        }
+
+        .feature-bar .fname {
+            font-size: 7px;
+            font-weight: 600;
+            color: #475569;
+            min-width: 74px;
+            text-align: right;
+        }
+
+        .feature-bar .bar-track {
+            flex: 1;
+            height: 8.5px;
+            background: #F1F5F9;
+            border-radius: 2px;
+            overflow: hidden;
+            border: 1px solid #E2E8F0;
+        }
+
+        .feature-bar .bar-fill {
+            height: 100%;
+            border-radius: 1.5px;
+            background: linear-gradient(90deg, #1E3A8A 0%, #D97706 100%);
+        }
+
+        .feature-bar .bar-value {
+            font-size: 7px;
+            font-weight: 800;
+            color: #B45309;
+            min-width: 24px;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           CARD 07: ADVERSARIAL THREAT & DEFENSE BOXES
+        ═══════════════════════════════════════════════════════ */
+        .adv-scenarios {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5px;
+            margin-top: 1.5px;
+            margin-bottom: 1.5px;
+        }
+
+        .adv-box {
+            background: #FFF7ED;
+            border: 1px solid #FED7AA;
+            border-radius: 3px;
+            padding: 2.5px 4px;
+        }
+
+        .adv-box.defense {
+            background: #F0FDF4;
+            border-color: #BBF7D0;
+        }
+
+        .adv-box-head {
+            font-size: 6px;
+            font-weight: 800;
+            color: #C2410C;
+            text-transform: uppercase;
+            margin-bottom: 1px;
+        }
+
+        .adv-box.defense .adv-box-head {
+            color: #15803D;
+        }
+
+        .adv-box-desc {
+            font-size: 6.8px;
+            color: #475569;
+            line-height: 1.25;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           CALLOUT BOXES
+        ═══════════════════════════════════════════════════════ */
+        .callout {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-left: 3px solid #0D9488;
+            border-radius: 0 3px 3px 0;
+            padding: 2.5px 4.5px;
+            margin-top: 1.5px;
+        }
+
+        .callout p {
+            font-size: 7.4px;
+            color: #475569;
+            line-height: 1.3;
+        }
+
+        .callout.warning {
+            border-left-color: #C2410C;
+            background: #FFF7ED;
+            border-color: #FED7AA;
+            padding: 2.5px 4.5px;
+        }
+
+        .callout.green {
+            border-left-color: #059669;
+            background: #ECFDF5;
+            border-color: #A7F3D0;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════════════════════════ */
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 4.5px;
+            background: #1E293B;
+            font-size: 6.8px;
+            color: #94A3B8;
+            flex-shrink: 0;
+        }
+
+        .footer-tags {
+            display: flex;
+            gap: 2.5px;
+        }
+
+        .footer-tag {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 2.5px;
+            padding: 1px 4px;
+            font-size: 6.2px;
+            font-weight: 700;
+            color: #E2E8F0;
+        }
+
+        /* ═══════════════════════════════════════════════════════
+           PRINT MEDIA OPTIMIZATION
+        ═══════════════════════════════════════════════════════ */
+        @media print {
+            *, *::before, *::after {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                overflow: hidden;
+                padding: 0;
+                margin: 0;
+                background: #F8FAFC !important;
+            }
+
+            .poster {
+                width: 210mm;
+                height: 297mm;
+                max-height: 297mm;
+                overflow: hidden;
+                box-shadow: none;
+                page-break-after: avoid;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="poster">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <div class="header-badge">SKRIPSI RESEARCH 2026</div>
+                <h1>Data Exfiltration Detection on DNS-over-HTTPS<br>Using Flow Metadata Machine Learning</h1>
+                <h2>Privacy-Preserving Non-Payload Approach on BCCC-CIRA-CIC-DoHBrw-2020 Dataset</h2>
+            </div>
+            <div class="header-right">
+                <div class="author-name">Yogi Mugni Santoso</div>
+                <div class="author-affiliation">
+                    Informatics Engineering<br>
+                    <strong>Universitas Widyatama</strong><br>
+                    Bandung, Indonesia
+                </div>
+            </div>
+        </header>
+
+        <!-- FULL-WIDTH METRICS HIGHLIGHT ROW -->
+        <div class="stats-row">
+            <div class="stat-box green">
+                <div class="number">99.98%</div>
+                <div class="label">Accuracy (RF)</div>
+            </div>
+            <div class="stat-box blue">
+                <div class="number">0.000041</div>
+                <div class="label">False Positive Rate</div>
+            </div>
+            <div class="stat-box teal">
+                <div class="number">0.45</div>
+                <div class="label">Optimal Threshold</div>
+            </div>
+            <div class="stat-box terracotta">
+                <div class="number">271K</div>
+                <div class="label">Throughput (row/s)</div>
+            </div>
+        </div>
+
+        <!-- 2-COLUMN STACKED GRID (UNIFORM 5.5px GAP EVERYWHERE - NO HOLES) -->
+        <div class="poster-grid">
+
+            <!-- ─────────── LEFT COLUMN ─────────── -->
+            <div class="column">
+
+                <!-- 01 Introduction -->
+                <div class="card acc-navy">
+                    <div class="card-title">
+                        <span class="icon-dot"></span>
+                        <h3>Introduction & Problem Statement</h3>
+                        <span class="section-num">01</span>
+                    </div>
+                    <p><b>DNS-over-HTTPS (DoH — RFC 8484)</b> encrypts DNS queries over standard HTTPS port 443, effectively blending with regular web traffic unlike DoT (port 853), making it exceptionally challenging to isolate without granular flow inspection.</p>
+                    <ul>
+                        <li><b>Core Dilemma:</b> Conventional IDS relying on Deep Packet Inspection (DPI) fails against encrypted TLS without intrusive SSL/TLS proxy decryption that compromises user confidentiality.</li>
+                        <li><b>Adversary Weaponization:</b> Threat actors exploit DoH via Base64/Hex subdomain encoding for covert data exfiltration and C2 tunneling, bypassing perimeter signature firewalls.</li>
+                        <li><b>Proposed Solution:</b> ML classification leveraging <b>statistical flow metadata</b> (packet length distribution, byte volume, IAT) with zero payload inspection overhead.</li>
+                    </ul>
+                    <!-- Threat tools detected tags -->
+                    <div class="threat-row">
+                        <span class="threat-label">Tested Tools:</span>
+                        <span class="threat-tag">dnscat2</span>
+                        <span class="threat-tag">iodine</span>
+                        <span class="threat-tag">DNSExfiltrator</span>
+                        <span class="threat-tag">dns2tcp</span>
+                    </div>
+                </div>
+
+                <!-- 02 Pipeline -->
+                <div class="card acc-navy">
+                    <div class="card-title">
+                        <span class="icon-dot"></span>
+                        <h3>Research Pipeline & Methodology</h3>
+                        <span class="section-num">02</span>
+                    </div>
+                    <div class="pipeline">
+                        <div class="pipeline-step">Dataset (491k)</div>
+                        <span class="pipeline-arrow">➔</span>
+                        <div class="pipeline-step">80:20 Stratified</div>
+                        <span class="pipeline-arrow">➔</span>
+                        <div class="pipeline-step">Random Forest</div>
+                        <span class="pipeline-arrow">➔</span>
+                        <div class="pipeline-step">Threshold 0.45</div>
+                    </div>
+                    <ul>
+                        <li><b>Dataset:</b> BCCC-CIRA-CIC-DoHBrw-2020 — 491,991 cleaned flow records after deduplicating 7,115 entries (56.4% Benign / 43.6% Malicious).</li>
+                        <li><b>28 Flow Features:</b> Structured into 10 Packet Length Statistics (Mode, Mean, StdDev, Median, CoV), 12 Inter-Arrival Time (IAT) metrics, and 6 Volume indicators.</li>
+                        <li><b>Stratified Split (80:20):</b> Selected over Time-Series split because flow-based aggregated features are session-independent immutable summaries (393,592 train / 98,399 test samples).</li>
+                        <li><b>Target:</b> Binary Classification — Benign (0) vs Malicious Exfiltration (1).</li>
+                    </ul>
+                    <div class="feature-tag-row">
+                        <div class="ftag">10 Packet Length Features</div>
+                        <div class="ftag">12 Time Interval (IAT)</div>
+                        <div class="ftag">6 Flow Volume Metrics</div>
+                    </div>
+                </div>
+
+                <!-- 03 Model Benchmark -->
+                <div class="card acc-green">
+                    <div class="card-title">
+                        <span class="icon-dot"></span>
+                        <h3>Model Performance Benchmark</h3>
+                        <span class="section-num">03</span>
+                    </div>
+                    <p>Evaluated on <b>98,399 test samples</b> under default 0.50 decision threshold:</p>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Model Architecture</th>
+                                    <th>Accuracy</th>
+                                    <th>Recall</th>
+                                    <th>F1-Score</th>
+                                    <th>FPR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Logistic Regression (Baseline)</td>
+                                    <td>90.13%</td>
+                                    <td>94.23%</td>
+                                    <td>90.64%</td>
+                                    <td>0.140810</td>
+                                </tr>
+                                <tr class="highlight-row">
+                                    <td>Random Forest (Bagging) <span class="badge-best">★ BEST</span></td>
+                                    <td>99.98%</td>
+                                    <td>99.97%</td>
+                                    <td>99.98%</td>
+                                    <td>0.000041</td>
+                                </tr>
+                                <tr>
+                                    <td>AdaBoost (Boosting)</td>
+                                    <td>99.82%</td>
+                                    <td>99.79%</td>
+                                    <td>99.82%</td>
+                                    <td>0.001444</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="adv-metrics-row">
+                        <span><b>Balanced Acc:</b> 99.9869%</span>
+                        <span><b>MCC:</b> 0.999736</span>
+                        <span><b>ROC-AUC:</b> 0.9999</span>
+                        <span><b>PR-AUC:</b> 0.9998</span>
+                    </div>
+                    <div class="latency-bar">
+                        <span><b>Inference Latency:</b> RF 0.0036 ms/sample</span>
+                        <span><b>AdaBoost:</b> 0.0120 ms</span>
+                        <span><b>LR Baseline:</b> 0.0011 ms</span>
+                    </div>
+                </div>
+
+                <!-- 04 Threshold Optimization & Confusion Matrix -->
+                <div class="card acc-green">
+                    <div class="card-title">
+                        <span class="icon-dot"></span>
+                        <h3>Threshold Optimization (θ = 0.45)</h3>
+                        <span class="section-num">04</span>
+                    </div>
+                    <p>Lowering threshold from <b>0.50 → 0.45</b> identifies the optimal operating point on the Precision-Recall curve, boosting Recall to <b>99.9820%</b> and peak F1-Score to <b>99.9890%</b>:</p>
+                    <ul>
+                        <li><b>False Negative Reduction:</b> FN dropped from <b class="text-navy">11 → 9 instances</b> (capturing 2 additional critical exfiltration flows).</li>
+                        <li><b>Zero FPR Penalty:</b> False positives maintained at only <b class="text-green">2 instances</b> out of 48,491 benign samples (TN = 48,489).</li>
+                    </ul>
+
+                    <!-- Confusion Matrix 2x2 Grid -->
+                    <div class="cm-block">
+                        <div class="cm-block-title">
+                            <span>Confusion Matrix (θ = 0.45)</span>
+                            <span style="color:#059669;">N = 98,399 Samples</span>
+                        </div>
+                        <div class="cm-2x2-grid">
+                            <div class="cm-card green">
+                                <div class="cm-val">49,899</div>
+                                <div class="cm-lbl">True Positive (TP)</div>
+                            </div>
+                            <div class="cm-card red">
+                                <div class="cm-val">9</div>
+                                <div class="cm-lbl">False Negative (FN)</div>
+                            </div>
+                            <div class="cm-card yellow">
+                                <div class="cm-val">2</div>
+                                <div class="cm-lbl">False Positive (FP)</div>
+                            </div>
+                            <div class="cm-card green">
+                                <div class="cm-val">48,489</div>
+                                <div class="cm-lbl">True Negative (TN)</div>
+                            </div>
+                        </div>
+                        <div class="cm-caption">
+                            <b>FPR = 0.000041:</b> Drastically mitigates SOC alert fatigue with only 2 false alerts out of 48,491 benign flows.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ─────────── RIGHT COLUMN ─────────── -->
+            <div class="column">
+
+                <!-- 05 SOC Topology & Feasibility -->
+                <div class="card acc-teal">
+                    <div class="card-title">
+                        <span class="icon-dot"></span>
+                        <h3>SOC Topology & Cost Feasibility</h3>
+                        <span class="section-num">05</span>
+                    </div>
+                    <p>Passive monitoring via <b>Core Switch SPAN Port</b> mirroring to Detection Server — zero latency overhead on production network pipelines with zero inline interruption:</p>
+                    <div class="topology">
+                        <div class="topo-node">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                            <span>Network<br>Traffic</span>
+                        </div>
+                        <span class="topo-arrow">➔</span>
+                        <div class="topo-node">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            <span>Core Switch<br>(SPAN)</span>
+                        </div>
+                        <span class="topo-arrow">➔</span>
+                        <div class="topo-node">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/></svg>
+                            <span>Detection<br>Server</span>
+                        </div>
+                        <span class="topo-arrow">➔</span>
+                        <div class="topo-node">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            <span>SOC<br>Dashboard</span>
+                        </div>
+                    </div>
+                    <!-- Procurement & Cost Estimation -->
+                    <div class="cost-box">
+                        <div class="cost-card">
+                            <div class="cost-head">Cloud ML Engine (4-8 vCPU, 16GB)</div>
+                            <div class="cost-num">OPEX ~Rp 3M–6M/mo</div>
+                            <div class="cost-detail">CAPEX ~0 (Low Barrier Architecture)</div>
+                        </div>
+                        <div class="cost-card">
+                            <div class="cost-head">Network Traffic Mirroring</div>
+                            <div class="cost-num">Zero Extra Cost</div>
+                            <div class="cost-detail">Native Core Switch SPAN Ports</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 06 Model Explainability -->
+                <div class="card acc-teal">
+                    <div class="card-title">
+                        <span class="icon-dot"></span>
+                        <h3>Model Explainability (SHAP & Gini)</h3>
+                        <span class="section-num">06</span>
+                    </div>
+                    <p>Top 4 features ranked by <b>Gini Importance</b> from Random Forest model:</p>
+                    <div class="feature-bars">
+                        <div class="feature-bar">
+                            <span class="fname">PacketLenMode</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+                            <span class="bar-value">0.2251</span>
+                        </div>
+                        <div class="feature-bar">
+                            <span class="fname">PacketLenMean</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:44%"></div></div>
+                            <span class="bar-value">0.0992</span>
+                        </div>
+                        <div class="feature-bar">
+                            <span class="fname">PacketLenStdDev</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:30%"></div></div>
+                            <span class="bar-value">0.0669</span>
+                        </div>
+                        <div class="feature-bar">
+                            <span class="fname">FlowBytesRecv</span>
+                            <div class="bar-track"><div class="bar-fill" style="width:26%"></div></div>
+                            <span class="bar-value">0.0592</span>
+                        </div>
+                    </div>
+                    <div class="callout" style="margin-top:1.5px;">
+                        <p><b>Domain Insight:</b> <i>PacketLengthMode</i> (Gini: 0.2251, SHAP: 0.1627) sharply dominates because exfiltration malware (dnscat2, iodine) uses fixed-size buffer chunking during Base64/Hex encoding, producing highly repetitive packet length modes. In contrast, benign browsing reflects variable domain query lengths.</p>
+                    </div>
+                </div>
+
+                <!-- 07 Robustness & Evasion Attacks -->
+                <div class="card acc-terracotta">
+                    <div class="card-title">
+                        <span class="icon-dot"></span>
+                        <h3>Robustness & Adversarial Evasion</h3>
+                        <span class="section-num">07</span>
+                    </div>
+                    <!-- Transparent Adversarial Vulnerability Banner -->
+                    <div class="callout warning">
+                        <p><b>Transparent Adversarial Vulnerability Assessment:</b> Evaluating model robustness against active traffic evasion attempts targeting dominant flow metadata features.</p>
+                    </div>
+
+                    <!-- Threat Flow Mini-Box (Visual Grid 2 Columns) -->
+                    <div class="adv-scenarios">
+                        <div class="adv-box">
+                            <div class="adv-box-head">Adversarial Threat Vectors</div>
+                            <div class="adv-box-desc">
+                                • <b>Packet Padding:</b> Mutating <i>PacketLengthMode</i> via dummy bytes.<br>
+                                • <b>Timing Jitter:</b> Obfuscating <i>FlowIAT</i> time-based features.
+                            </div>
+                        </div>
+                        <div class="adv-box defense">
+                            <div class="adv-box-head">Defense & Mitigation Strategy</div>
+                            <div class="adv-box-desc">
+                                • <b>Multi-Model Ensemble:</b> RF + AdaBoost diversity.<br>
+                                • <b>Adversarial Retraining:</b> Periodic retraining on augmented attack flows.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expanded Academic Narrative -->
+                    <ul>
+                        <li><b>Non-Adversarial Baseline:</b> Model trained on standard flow metadata without adversarial samples, establishing a transparent baseline for future robust ML research.</li>
+                        <li><b>Target Feature Exploitation:</b> Padding attacks attempt to flatten <i>PacketLengthMode</i> (Gini: 0.2251), making malicious traffic statistically mirror variable benign browsing.</li>
+                        <li><b>Robust Optimization Roadmap:</b> Recommends integrating Adversarial Training and continuous Red-Teaming simulations to harden the ML engine before production deployment.</li>
+                    </ul>
+                </div>
+
+                <!-- 08 Conclusion & Future Work -->
+                <div class="card acc-terracotta">
+                    <div class="card-title">
+                        <span class="icon-dot"></span>
+                        <h3>Conclusion & SOC Operational Roadmap</h3>
+                        <span class="section-num">08</span>
+                    </div>
+                    <p>Flow metadata machine learning <b class="text-green">effectively detects</b> encrypted DoH exfiltration <b>without payload decryption</b>, fully preserving end-user privacy while maintaining operational security.</p>
+                    <ul>
+                        <li><b>Random Forest:</b> Peak performance — accuracy <b class="text-green">99.98%</b>, FPR 0.000041, and real-time inference speed (<b>0.0036 ms/sample</b>).</li>
+                        <li><b>Threshold 0.45:</b> Maximizes recall (FN = 9) with minimal false alarm overhead for SOC teams.</li>
+                        <li><b>Alert Deduplication:</b> Recommends technical implementation of <b>60-second Time-Window Aggregation</b> in log pipelines to consolidate repetitive alerts by Source/Dest IP, preventing analyst fatigue.</li>
+                        <li><b>Future Work:</b> Real-time streaming pipeline integration with Adversarial Training.</li>
+                    </ul>
+                    <div class="callout green" style="margin-top:1.5px;">
+                        <p><b>Key Takeaway:</b> Non-payload ML is highly viable, cost-effective, and production-ready for enterprise SOC deployment.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER WITH REPO LINK BADGE -->
+        <div class="footer">
+            <span>© 2026 Yogi Mugni Santoso — Universitas Widyatama, Bandung | BCCC-CIRA-CIC-DoHBrw-2020 Dataset</span>
+            <div class="footer-tags">
+                <span class="footer-tag">Repo: github.com/yogimugni/doh-exfiltration-ml</span>
+                <span class="footer-tag">DoH Exfiltration</span>
+                <span class="footer-tag">Random Forest</span>
+                <span class="footer-tag">SHAP & Gini</span>
+                <span class="footer-tag">SOC Architecture</span>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

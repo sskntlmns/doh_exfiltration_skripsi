@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-08-06 15:33:03",
+  "model_name": "Random Forest",
+  "threshold": 0.45,
+  "output_files": [
+    "error_analysis_summary.csv",
+    "false_positive_samples.csv",
+    "false_negative_samples.csv",
+    "prediction_probability_summary.csv",
+    "prediction_probability_distribution.png",
+    "borderline_samples.csv",
+    "borderline_summary.csv",
+    "model_deployment_profile.csv",
+    "top_n_feature_experiment.csv",
+    "top_n_feature_experiment.png",
+    "top_n_feature_experiment_status.txt",
+    "ablation_study_results.csv",
+    "ablation_study_results.png",
+    "ablation_study_status.txt",
+    "robustness_error_analysis_report.txt",
+    "robustness_error_analysis_info.json"
+  ],
+  "methodological_notes": [
+    "Error analysis depends on the currently loaded test split and available best_model object.",
+    "Probability analysis is limited when the selected model does not expose predict_proba.",
+    "Top-N and ablation experiments use a lightweight LogisticRegression comparator, so they are diagnostic and do not replace the main experiment result.",
+    "Feature grouping in the ablation study is based on feature-name heuristics.",
+    "The analysis supports robustness and limitation discussion, not production deployment claims.",
+    "The dataset is public and the Malicious label is used as a proxy for harmful DoH traffic relevant to tunneling/exfiltration scenarios.",
+    "The model uses numerical metadata-flow features without decrypting payload content."
+  ]
+}

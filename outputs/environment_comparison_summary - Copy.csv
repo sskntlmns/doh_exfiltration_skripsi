@@ -1,0 +1,6 @@
+aspect,current_experiment,target_soc_environment,risk_or_gap,mitigation
+Data source,Public/offline dataset,"Live resolver, proxy, EDR, DNS, and network telemetry",Distribusi trafik produksi dapat berbeda dari dataset penelitian,Validasi ulang dengan telemetry lokal dan holdout temporal
+Label quality,Dataset label digunakan sebagai ground truth,"Label berasal dari triage analyst, threat intel, dan incident closure",Label operasional bisa noisy atau terlambat,Gunakan feedback loop dan periodic relabeling
+Feature scope,Metadata flow numerik,"Metadata flow ditambah host, user, ASN, JA3/JA4, dan policy context",Konteks SOC belum lengkap di model ini,Tambahkan enrichment non-payload secara bertahap
+Latency,Batch notebook,Near-real-time scoring,Kebutuhan throughput belum diuji end-to-end,Load test pipeline scoring dan alert delivery
+Alert handling,Simulasi alert sederhana,Case management dengan deduplication dan suppression,Alert fatigue jika threshold terlalu agresif,Gunakan threshold berbasis kapasitas SOC dan severity routing

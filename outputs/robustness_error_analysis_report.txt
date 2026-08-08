@@ -1,0 +1,46 @@
+Final Robustness and Limitation Report
+==============================================
+Generated at: 2026-08-06 15:33:03
+Model name: Random Forest
+Threshold: 0.45
+
+1. Error Analysis
+   Status: ok
+   Total samples: 98399
+   False positives: 2
+   False negatives: 9
+
+2. Probability Distribution
+   Count: 98399
+   Mean probability: 0.5071072368621632
+   Median probability: 0.98
+
+3. Borderline Samples
+   Saved borderline samples: 50
+   Samples within 0.05 margin: 15
+
+4. Deployment Profile
+   Model class: Pipeline
+   Feature count: 28
+   Model size MB: n/a
+   Load time sec: n/a
+   Latency ms/sample: 0.2134925001882948
+   Latency status: measured
+
+5. Top-N Feature Experiment
+   Best Top-N: 28
+   Best F1: 0.9064626178131564
+   Best ROC-AUC: 0.95827978343942
+
+6. Ablation Study
+   Most impactful removed group: timing
+   F1 delta vs baseline: -0.0986698254611305
+
+7. Limitations
+   - Error analysis depends on the currently loaded test split and available best_model object.
+   - Probability analysis is limited when the selected model does not expose predict_proba.
+   - Top-N and ablation experiments use a lightweight LogisticRegression comparator, so they are diagnostic and do not replace the main experiment result.
+   - Feature grouping in the ablation study is based on feature-name heuristics.
+   - The analysis supports robustness and limitation discussion, not production deployment claims.
+   - The dataset is public and the Malicious label is used as a proxy for harmful DoH traffic relevant to tunneling/exfiltration scenarios.
+   - The model uses numerical metadata-flow features without decrypting payload content.

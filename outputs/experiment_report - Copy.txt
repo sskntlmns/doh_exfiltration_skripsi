@@ -1,0 +1,50 @@
+DoH Exfiltration Detection - Metadata Flow Experiment Report
+====================================================================
+Dataset              : ..\data\BCCC-CIRA-CIC-DoHBrw-2020.csv
+Rows after cleaning  : 491,991
+Numeric features     : 28
+Label column         : Label
+Negative class (0)   : Benign
+Positive class (1)   : Malicious
+
+Model Metrics at Default Threshold 0.50
+              model  accuracy  precision  recall_tpr  f1_score  roc_auc      fpr  training_time_sec  inference_time_sec  throughput_rows_per_sec    tn   fp   fn    tp
+      Random Forest  0.999868   0.999960    0.999780  0.999870 0.999999 0.000041          96.859887            0.293675             3.350606e+05 48489    2   11 49897
+           AdaBoost  0.998262   0.998597    0.997976  0.998286 0.999961 0.001444         253.326194            1.795321             5.480857e+04 48421   70  101 49807
+Logistic Regression  0.901361   0.873222    0.942334  0.906463 0.958280 0.140810           4.218694            0.059031             1.666918e+06 41663 6828 2878 47030
+
+Best model           : Random Forest
+Selected threshold   : 0.45
+
+Selected Threshold Metrics
+ threshold  accuracy  precision  recall_tpr  f1_score      fpr      tn  fp  fn      tp
+      0.45  0.999888    0.99996     0.99982   0.99989 0.000041 48489.0 2.0 9.0 49899.0
+
+Top 10 Random Forest Feature Importance
+                           feature  importance
+                  PacketLengthMode    0.225193
+                  PacketLengthMean    0.099191
+     PacketLengthStandardDeviation    0.066940
+                 FlowBytesReceived    0.059222
+       PacketTimeStandardDeviation    0.057700
+                PacketTimeVariance    0.055624
+                PacketLengthMedian    0.052119
+                     FlowBytesSent    0.045637
+PacketLengthCoefficientofVariation    0.043203
+              PacketLengthVariance    0.039397
+
+SOC Alert Simulation Summary
+ alert severity                                             soc_action  count
+ False      low                                               no alert  48498
+  True      low                                               no alert      2
+  True   medium                        monitor flow and enrich context     35
+  True     high                            create investigation ticket     89
+  True critical prioritize investigation and validate with SOC context  49775
+
+Methodological Notes
+------------------------------------------------------------
+- Dataset publik digunakan karena penelitian tidak memiliki akses terhadap trafik SOC operasional nyata.
+- Kelas Malicious digunakan sebagai proksi trafik DoH berbahaya yang relevan dengan skenario eksfiltrasi/tunneling.
+- Model hanya menggunakan metadata flow numerik dan tidak melakukan dekripsi payload.
+- Simulasi alert SOC merupakan proof of concept offline, bukan sistem deteksi real-time.
+- Hasil pada dataset publik seimbang belum tentu langsung merepresentasikan performa pada jaringan operasional nyata.

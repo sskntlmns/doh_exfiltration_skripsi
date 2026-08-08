@@ -1,0 +1,2 @@
+model,rows_profiled,threshold,inference_time_sec,throughput_rows_per_sec,peak_memory_mb,predicted_alerts
+Random Forest,98399,0.45,0.34465799998724833,285497.50768483704,50.523000717163086,49901

@@ -1,0 +1,26 @@
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.ipynb_checkpoints/
+
+# Dataset (Exceeds GitHub 100MB file limit)
+data/*.csv
+data/*.pcap
+*.csv.gz
+
+# Streamlit local state
+.streamlit/secrets.toml
+
+# OS artifacts
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store

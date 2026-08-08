@@ -1,0 +1,8 @@
+enhanced_alert,priority,triage_reason,recommended_action,count
+False,P4,below enhanced operating threshold,suppress unless correlated with other signals,48498
+True,P4,above enhanced operating threshold,queue for analyst review,2
+True,P3,above enhanced operating threshold,queue for analyst review,29
+True,P3,high model confidence,queue for analyst review,6
+True,P2,high model confidence,create case and correlate with DNS/proxy logs,79
+True,P2,very high model confidence,create case and correlate with DNS/proxy logs,10
+True,P1,very high model confidence,open incident and validate endpoint/network context,49775

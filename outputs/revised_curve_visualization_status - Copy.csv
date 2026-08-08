@@ -1,0 +1,3 @@
+item,status,file
+roc_curve_with_auc_legend,success,..\outputs\roc_curve_with_auc_legend.png
+precision_recall_curve_with_ap_legend,success,..\outputs\precision_recall_curve_with_ap_legend.png

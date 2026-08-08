@@ -1,0 +1,12 @@
+{
+  "best_params": {
+    "classifier__max_depth": null,
+    "classifier__min_samples_leaf": 1,
+    "classifier__n_estimators": 200
+  },
+  "cv_best_roc_auc": 0.9999999058639544,
+  "test_roc_auc": 0.9999989124366141,
+  "test_f1_default_threshold": 0.9998697486148266,
+  "test_recall_default_threshold": 0.9997795944537949,
+  "test_precision_default_threshold": 0.9999599190364536
+}

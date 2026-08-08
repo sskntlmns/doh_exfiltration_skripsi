@@ -1,0 +1,179 @@
+{
+  "dataset_path": "..\\data\\BCCC-CIRA-CIC-DoHBrw-2020.csv",
+  "output_dir": "..\\outputs",
+  "best_model_name": "Random Forest",
+  "default_selected_threshold": 0.45,
+  "enhanced_selected_threshold": 0.45,
+  "advanced_metrics": [
+    {
+      "model": "Random Forest",
+      "balanced_accuracy": 0.9998691748433624,
+      "average_precision": 0.999998809659513,
+      "mcc": 0.9997357322963073,
+      "specificity_tnr": 0.9999587552329299,
+      "negative_predictive_value": 0.9997731958762887,
+      "false_discovery_rate": 4.008096354636366e-05,
+      "false_positive_rate": 4.124476707017797e-05,
+      "false_negative_count": 11,
+      "false_positive_count": 2
+    },
+    {
+      "model": "AdaBoost",
+      "balanced_accuracy": 0.9982663547505124,
+      "average_precision": 0.9999606526794984,
+      "mcc": 0.9965238634508753,
+      "specificity_tnr": 0.9985564331525437,
+      "negative_predictive_value": 0.9979184699723836,
+      "false_discovery_rate": 0.0014034524931331074,
+      "false_positive_rate": 0.001443566847456229,
+      "false_negative_count": 101,
+      "false_positive_count": 70
+    },
+    {
+      "model": "Logistic Regression",
+      "balanced_accuracy": 0.9007621297940226,
+      "average_precision": 0.953172368107845,
+      "mcc": 0.8050581156043011,
+      "specificity_tnr": 0.8591903652224124,
+      "negative_predictive_value": 0.9353853752722211,
+      "false_discovery_rate": 0.12677782316461808,
+      "false_positive_rate": 0.1408096347775876,
+      "false_negative_count": 2878,
+      "false_positive_count": 6828
+    }
+  ],
+  "resource_profile": {
+    "model": "Random Forest",
+    "rows_profiled": 98399,
+    "threshold": 0.45,
+    "inference_time_sec": 0.4018470000009984,
+    "throughput_rows_per_sec": 244866.82742375962,
+    "peak_memory_mb": 53.51784133911133,
+    "predicted_alerts": 49901
+  },
+  "cv_summary": [
+    {
+      "metric": "roc_auc",
+      "mean": 0.9999998620695761,
+      "std": 1.0527339754409659e-07,
+      "min": 0.9999997022836552,
+      "max": 0.9999999719012949
+    },
+    {
+      "metric": "f1",
+      "mean": 0.9998757640315435,
+      "std": 2.8760056109335774e-05,
+      "min": 0.9998396986334308,
+      "max": 0.9999198461045207
+    },
+    {
+      "metric": "recall",
+      "mean": 0.9998236742782869,
+      "std": 5.4358340165191266e-05,
+      "min": 0.9997395207181213,
+      "max": 0.9998998156608159
+    },
+    {
+      "metric": "precision",
+      "mean": 0.9999278636617579,
+      "std": 5.6101710052913016e-05,
+      "min": 0.9998597334936379,
+      "max": 0.9999799603214364
+    },
+    {
+      "metric": "balanced_accuracy",
+      "mean": 0.9998747165085472,
+      "std": 2.921107196543603e-05,
+      "min": 0.999837653945683,
+      "max": 0.9999195583656092
+    }
+  ],
+  "lightweight_gridsearch": {
+    "best_params": {
+      "classifier__max_depth": null,
+      "classifier__min_samples_leaf": 1,
+      "classifier__n_estimators": 200
+    },
+    "cv_best_roc_auc": 0.9999999058639544,
+    "test_roc_auc": 0.9999989124366141,
+    "test_f1_default_threshold": 0.9998697486148266,
+    "test_recall_default_threshold": 0.9997795944537949,
+    "test_precision_default_threshold": 0.9999599190364536
+  },
+  "enhanced_threshold_selected_metrics": {
+    "threshold": 0.45,
+    "precision": 0.9999599206428729,
+    "recall_tpr": 0.9998196681894687,
+    "f1_score": 0.999889789497941,
+    "specificity_tnr": 0.9999587552329299,
+    "fpr": 4.124476707017797e-05,
+    "alert_volume": 49901.0,
+    "alert_rate": 0.5071291374912347,
+    "utility_score": 2.9994755227205996,
+    "tn": 48489.0,
+    "fp": 2.0,
+    "fn": 9.0,
+    "tp": 49899.0
+  },
+  "environment_comparison": [
+    {
+      "aspect": "Data source",
+      "current_experiment": "Public/offline dataset",
+      "target_soc_environment": "Live resolver, proxy, EDR, DNS, and network telemetry",
+      "risk_or_gap": "Distribusi trafik produksi dapat berbeda dari dataset penelitian",
+      "mitigation": "Validasi ulang dengan telemetry lokal dan holdout temporal"
+    },
+    {
+      "aspect": "Label quality",
+      "current_experiment": "Dataset label digunakan sebagai ground truth",
+      "target_soc_environment": "Label berasal dari triage analyst, threat intel, dan incident closure",
+      "risk_or_gap": "Label operasional bisa noisy atau terlambat",
+      "mitigation": "Gunakan feedback loop dan periodic relabeling"
+    },
+    {
+      "aspect": "Feature scope",
+      "current_experiment": "Metadata flow numerik",
+      "target_soc_environment": "Metadata flow ditambah host, user, ASN, JA3/JA4, dan policy context",
+      "risk_or_gap": "Konteks SOC belum lengkap di model ini",
+      "mitigation": "Tambahkan enrichment non-payload secara bertahap"
+    },
+    {
+      "aspect": "Latency",
+      "current_experiment": "Batch notebook",
+      "target_soc_environment": "Near-real-time scoring",
+      "risk_or_gap": "Kebutuhan throughput belum diuji end-to-end",
+      "mitigation": "Load test pipeline scoring dan alert delivery"
+    },
+    {
+      "aspect": "Alert handling",
+      "current_experiment": "Simulasi alert sederhana",
+      "target_soc_environment": "Case management dengan deduplication dan suppression",
+      "risk_or_gap": "Alert fatigue jika threshold terlalu agresif",
+      "mitigation": "Gunakan threshold berbasis kapasitas SOC dan severity routing"
+    }
+  ],
+  "artifact_files": {
+    "advanced_metrics_csv": "..\\outputs\\advanced_evaluation_metrics.csv",
+    "resource_profile_csv": "..\\outputs\\resource_profile_simple.csv",
+    "cross_validation_csv": "..\\outputs\\cross_validation_stability.csv",
+    "lightweight_gridsearch_csv": "..\\outputs\\lightweight_gridsearch_results.csv",
+    "lightweight_gridsearch_json": "..\\outputs\\lightweight_gridsearch_summary.json",
+    "explainability_csv": "..\\outputs\\explainability_importance.csv",
+    "explainability_png": "..\\outputs\\explainability_importance.png",
+    "enhanced_threshold_csv": "..\\outputs\\enhanced_threshold_analysis.csv",
+    "enhanced_threshold_png": "..\\outputs\\enhanced_threshold_analysis.png",
+    "environment_comparison_csv": "..\\outputs\\environment_comparison_summary.csv",
+    "enhanced_soc_alert_summary_csv": "..\\outputs\\enhanced_soc_alert_summary.csv",
+    "top_enhanced_soc_alerts_csv": "..\\outputs\\top_enhanced_soc_alerts.csv",
+    "enriched_report_txt": "..\\outputs\\enriched_experiment_report.txt",
+    "enriched_info_json": "..\\outputs\\enriched_experiment_info.json"
+  },
+  "methodological_notes": [
+    "Dataset publik digunakan karena tidak tersedia akses trafik SOC operasional nyata.",
+    "Kelas Malicious digunakan sebagai proksi trafik DoH berbahaya yang relevan dengan skenario eksfiltrasi/tunneling.",
+    "Model hanya menggunakan metadata flow numerik dan tidak melakukan dekripsi payload.",
+    "Simulasi alert SOC merupakan proof of concept offline, bukan sistem real-time.",
+    "Hasil pada dataset publik belum tentu langsung merepresentasikan performa pada jaringan operasional nyata.",
+    "Eksperimen berat seperti Cross-Validation, GridSearchCV, dan Explainability dapat dijalankan terpisah serta dicatat statusnya jika belum dijalankan."
+  ]
+}

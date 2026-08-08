@@ -1,0 +1,2 @@
+model_name,model_class,threshold,feature_count,train_rows,test_rows,predict_proba_available,decision_function_available,latency_ms_per_sample,latency_status,context_status,generated_at
+Random Forest,Pipeline,0.45,28,393592,98399,True,False,0.2134925001882948,measured,ok,2026-08-06 15:32:44

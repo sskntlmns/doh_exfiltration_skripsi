@@ -1,0 +1,2 @@
+model_name,model_class,threshold,feature_count,train_rows,test_rows,predict_proba_available,decision_function_available,latency_ms_per_sample,latency_status,context_status,generated_at
+unavailable,unavailable,0.5,0,0,0,False,False,,not_measured,missing_model_or_test_data,2026-06-09 13:54:33

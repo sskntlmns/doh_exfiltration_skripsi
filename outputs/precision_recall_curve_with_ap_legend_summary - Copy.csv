@@ -1,0 +1,4 @@
+model_name,average_precision,sample_count,generated_at
+Logistic Regression,0.953172368107845,98399,2026-07-07 16:01:29
+Random Forest,0.999998809659513,98399,2026-07-07 16:01:30
+AdaBoost,0.9999606526794984,98399,2026-07-07 16:01:30
