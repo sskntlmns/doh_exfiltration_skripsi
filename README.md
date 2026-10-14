@@ -47,13 +47,15 @@ Traditional Intrusion Detection Systems (IDS) relying on Deep Packet Inspection 
 ├── .gitignore                 # Excludes venv, cache, and heavy dataset (>100MB)
 ├── notebooks/                 # Exploratory data analysis notebooks
 └── outputs/                   # Trained models (.pkl), evaluation metrics, and plots
+```
+
 ---
 
 ## 💻 Installation & Usage
 
 ### 1. Clone Repository & Setup Virtual Environment
 ```bash
-git clone [https://github.com/sskntlmns/doh_exfiltration_skripsi.git](https://github.com/sskntlmns/doh_exfiltration_skripsi.git)
+git clone https://github.com/sskntlmns/doh_exfiltration_skripsi.git
 cd doh_exfiltration_skripsi
 python -m venv .venv
 
@@ -66,7 +68,7 @@ source .venv/bin/activate
 
 ### 2. Install Dependencies
 ```bash
-pip install -r requirements_gui.txt
+pip install -r requirements.txt
 ```
 
 ### 3. Run Streamlit GUI Dashboard
