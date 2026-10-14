@@ -54,11 +54,13 @@ Traditional Intrusion Detection Systems (IDS) relying on Deep Packet Inspection 
 
 ### 1. Clone Repository & Setup Virtual Environment
 ```bash
-git clone https://github.com/yogimugni/doh-exfiltration-ml.git
-cd doh-exfiltration-ml
+git clone [https://github.com/sskntlmns/doh_exfiltration_skripsi.git](https://github.com/sskntlmns/doh_exfiltration_skripsi.git)
+cd doh_exfiltration_skripsi
 python -m venv .venv
+
 # Windows:
 .venv\Scripts\activate
+
 # Linux/macOS:
 source .venv/bin/activate
 ```
