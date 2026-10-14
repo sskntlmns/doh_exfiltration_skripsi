@@ -1,14 +1,15 @@
 # 🛡️ Data Exfiltration Detection on DNS-over-HTTPS (DoH) Using Flow Metadata Machine Learning
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Framework](https://img.shields.io/badge/GUI-Streamlit-red.svg)](https://streamlit.io/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://doh-exfiltration-detection.streamlit.app)
 [![Dataset](https://img.shields.io/badge/Dataset-BCCC--CIRA--CIC--DoHBrw--2020-green.svg)](https://www.unb.ca/cic/datasets/dohbrw-2020.html)
 [![Accuracy](https://img.shields.io/badge/Accuracy-99.98%25-brightgreen.svg)]()
 [![Privacy](https://img.shields.io/badge/Privacy-Non--Payload%20Approach-orange.svg)]()
 
 > **Undergraduate Thesis (Skripsi) Research — Universitas Widyatama (2026)**  
 > **Author:** Yogi Mugni Santoso  
-> **Topic:** Detection of DNS-over-HTTPS (DoH) Data Exfiltration and Tunneling Attacks Using Non-Payload Flow Metadata Machine Learning.
+> **Topic:** Detection of DNS-over-HTTPS (DoH) Data Exfiltration and Tunneling Attacks Using Non-Payload Flow Metadata Machine Learning.  
+> **Live Demo:** [doh-exfiltration-detection.streamlit.app](https://doh-exfiltration-detection.streamlit.app)
 
 ---
 
@@ -40,14 +41,12 @@ Traditional Intrusion Detection Systems (IDS) relying on Deep Packet Inspection 
 ```text
 ├── app.py                     # Interactive Streamlit GUI (Dashboard & Prediction)
 ├── Poster.html                # Print-Ready A4 Portrait Academic Research Poster
-├── requirements_gui.txt       # Python dependencies
+├── requirements.txt           # Python dependencies for deployment
+├── requirements_gui.txt       # GUI dependencies
 ├── lampiran_2_source_code.py  # Model training and feature evaluation scripts
 ├── .gitignore                 # Excludes venv, cache, and heavy dataset (>100MB)
-├── data/                      # Dataset folder (BCCC-CIRA-CIC-DoHBrw-2020)
 ├── notebooks/                 # Exploratory data analysis notebooks
 └── outputs/                   # Trained models (.pkl), evaluation metrics, and plots
-```
-
 ---
 
 ## 💻 Installation & Usage
